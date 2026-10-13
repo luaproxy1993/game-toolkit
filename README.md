@@ -18,4 +18,5 @@ Already on this account, and not recopied here:
 - [genre shape](cards/genre-shape.md) — one primary paradigm, primitives stay in their own skills
 - [fun](cards/fun.md) — a design note is not evidence; play, then score
 - [experience loop](cards/experience-loop.md) — four lines before code; a liked screenshot is not evidence
+- [studio roles](cards/studio-roles.md) — a role writes its decision; the art director does not draw
 - [content writes](cards/content-writes.md) — dry-run, one pack, leave the other pack's bytes alone
