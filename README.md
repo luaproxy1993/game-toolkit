@@ -11,6 +11,7 @@ Already on this account, and not recopied here:
 - [rpg-campaign-maker](https://github.com/luaproxy1993/rpg-campaign-maker) — one sitting from a campaign slice or a book
 - [world-bible](https://github.com/luaproxy1993/world-bible) — the world the campaigns sit on
 - [world-bible-pack](https://github.com/luaproxy1993/world-bible-pack) — portraits, map, places, props
+- [my-game-design-director](https://github.com/luaproxy1993/my-game-design-director) — this author's scene, quest, and play judgments
 
 ## Cards
 
