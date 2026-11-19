@@ -9,7 +9,7 @@ description: >
 
 # Game GitHub toolkit
 
-The toolkit is https://github.com/luaproxy1993/game-toolkit. The local checkout is `/Users/a123/grokmaker/game-toolkit`. If that directory is missing, clone the repo there. Cards in `cards/` are the decisions. Upstream stays at its own URL.
+The toolkit is https://github.com/luaproxy1993/game-toolkit. The local checkout is `/Users/a123/grokmaker/game-toolkit`. If that directory is missing, clone the repo there. Cards in `cards/` are the decisions. Upstream stays at its own URL. First-party production-pipeline skills live in `skills/`; do not vendor third-party upstream source into this repo.
 
 ## Steps
 

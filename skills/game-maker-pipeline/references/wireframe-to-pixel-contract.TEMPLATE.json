@@ -1,0 +1,43 @@
+{
+  "contract_id": "{SLUG}-WIREFRAME-TO-PIXEL-v1",
+  "project_slug": "{slug}",
+  "author_confirmation": null,
+  "author_note": "粗糙 canvas/CSS 仅为布局占位符；通过后按此结构生成精美像素模块",
+  "mockup_role": {
+    "current": "layout_wireframe_only",
+    "forbidden_interpretation": "mockup 审美 = 最终品质",
+    "what_is_locked": [
+      "orthographic_side_view_fixed 机位",
+      "模块 anchor_px 与 attach_edge",
+      "结构 tier 叠层顺序与 replaces 关系",
+      "生产者 visual_module 出现条件与位置",
+      "主交互区 bbox",
+      "playfield 占屏比例"
+    ],
+    "what_is_not_locked": [
+      "CSS clip-path 几何形状",
+      "纯色块材质",
+      "临时 sky/ground gradient"
+    ]
+  },
+  "post_pick_pipeline": {
+    "trigger": "screenshot: pick + scope: accept",
+    "steps": [
+      "1. 从 layout JSON 导出模块清单 + anchor_px",
+      "2. 按 art/art-prompt-registry.json generation_order 逐模块 pic gen",
+      "3. 每模块透明底 PNG，ground_line 对齐 anchor_px.bottom",
+      "4. 白盒 game/ 用 <img> 叠层替换 CSS 模块，禁止改 anchor",
+      "5. 作者参考图：screenshots/author-ref/{pick}-wireframe-approved-layout.jpg"
+    ],
+    "quality_target": "与 style_anchor 一致的 16-bit 高密度像素；每模块独立精美，组合后布局一致"
+  },
+  "author_reference": {
+    "path": "screenshots/author-ref/{pick}-wireframe-approved-layout.jpg",
+    "describes": "作者确认的模块布局 — 结构 + 生产者同屏位置关系"
+  },
+  "layout_source_of_truth": [
+    "castle-progression.json 或项目 layout JSON",
+    "screenshots/screenshot-structure-spec.json",
+    "gdd/ui-binding-map.json"
+  ]
+}

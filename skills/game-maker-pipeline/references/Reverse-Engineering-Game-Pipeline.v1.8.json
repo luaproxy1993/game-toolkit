@@ -1,0 +1,375 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "pipeline_id": "reverse-engineering-game-pipeline",
+  "version": "1.8.1",
+  "name": "Reverse Engineering Game Maker Pipeline",
+  "name_zh": "截图反推游戏制作流水线",
+  "description": "策划案 → 具体 mockup → 作者选图 → 反推热区/内容量/状态机 → 最小白盒 → 出货。",
+  "human_manual": "Reverse-Engineering-Game-Pipeline.md",
+  "template": "grokmaker/reverse-game-template",
+  "skill": "reverse-game-maker",
+  "slash_command": "/reverse-game-maker",
+
+  "core_axiom": "选中 mockup = 视觉 + UI + 叙事常理 + 信息密度合同。没出现在 mockup/策划案里的，默认不做。",
+
+  "important_rules": {
+    "priority": "SUPREME",
+    "rules": [
+      { "id": "RE-01", "rule": "mockup 须为可玩态静帧（场景+功能UI+示例文案）", "severity": "hard_block" },
+      { "id": "RE-02", "rule": "作者 pick 前禁止 reverse_extract 与 whitebox", "severity": "hard_block" },
+      { "id": "RE-03", "rule": "screenshot-spec 必须由选中 mockup 反推", "severity": "hard_block" },
+      { "id": "RE-04", "rule": "白盒只实现 spec 已列元素", "severity": "hard_block" },
+      { "id": "RE-05", "rule": "多状态须≥2 mockup 或作者确认单帧", "severity": "hard_block" },
+      { "id": "RE-06", "rule": "热区须有 bbox_pct", "severity": "hard_block" },
+      { "id": "RE-07", "rule": "内容量从 content-slots 推导", "severity": "hard_block" },
+      { "id": "RE-08", "rule": "HTTP 预览验收", "severity": "hard_block" },
+      { "id": "RE-09", "rule": "作者不满意回 re_01 重做", "severity": "hard_block" },
+      { "id": "RE-10", "rule": "动画/音频默认 phase-2", "severity": "guiding" },
+      { "id": "RE-11", "rule": "每 variant 必先有 mockup-briefs.json 策划案", "severity": "hard_block" },
+      { "id": "RE-12", "rule": "只偷 exemplar UI 结构，不偷营业/多人叙事", "severity": "hard_block" },
+      { "id": "RE-13", "rule": "作者门=策划案+具体 mockup，禁止仅抽象 canvas", "severity": "hard_block" },
+      { "id": "RE-14", "rule": "文案用 HTML 叠层；禁 image_gen 烘焙台词位图作合同", "severity": "hard_block" },
+      { "id": "RE-15", "rule": "mockup 内每个可见元素须符合统一游戏 aesthetic；禁灰框/通用占位；气质与场景一致", "severity": "hard_block" },
+      { "id": "RE-16", "rule": "re_00 须由 true_gamer 将作者笼统输入拓展为专业策划案；禁跳过直做 mockup", "severity": "hard_block" },
+      { "id": "RE-17", "rule": "re_00/re_01 前须有 art/style-anchor + art/art-prompt-registry；每可见 diegetic 资产有稳定 asset_id、prompt、references[]、generation_order", "severity": "hard_block" },
+      { "id": "RE-18", "rule": "re_01 前须通过 gdd_minimum_contract 验收（数值/生产者/升级/输入/状态机草稿/叙事/美术合同）；禁「几句话策划案」直接 mockup", "severity": "hard_block" },
+      { "id": "RE-19", "rule": "art-prompt-registry 与磁盘资产 1:1；forbidden_assets 不得进 game/；缺登记即 T-ART-04", "severity": "hard_block" },
+      { "id": "RE-20", "rule": "生成 prompt = style_anchor.prompt_block（verbatim）+ asset.prompt_delta + negative_block；禁一行摘要代替完整拼接", "severity": "hard_block" },
+      { "id": "RE-21", "rule": "禁止绕过 registry 临时拼 prompt（ad-hoc image_gen）；所有 pic gen 必须读 registry 条目", "severity": "hard_block" },
+      { "id": "RE-22", "rule": "references[] 非空 → image_edit 或 parent 已落盘；严格按 dependency_graph.generation_order", "severity": "hard_block" },
+      { "id": "RE-23", "rule": "mockup CSS/色块/线框 = layout_wireframe_only；终稿像素须 wireframe-to-pixel-contract + 替换 anchor 不漂移", "severity": "hard_block" },
+      { "id": "RE-24", "rule": "style_anchor 版本单调：supersedes 后旧 anchor 资产全部退役 forbidden_assets，禁止 v1/v2 混装", "severity": "hard_block" },
+      { "id": "RE-25", "rule": "每张 module 生成后验收：透明底/ground_line/anchor_px ±3%；失败 art: regen，禁 object-fit 硬贴糊弄", "severity": "hard_block" },
+      { "id": "RE-26", "rule": "批量 pic gen 后更新 art/prompt-audit.json（registry_prompt + runtime_prompt 双轨）；ship 前 art_verify PASS", "severity": "hard_block" },
+      { "id": "RE-27", "rule": "match_and_correct.sh 审计 batch 资产 vs style-anchor（palette ±15 Euclidean、anchor_px ±3%、orthographic ground_line）；漂移写 art-match-audit + batch_fix_commands", "severity": "hard_block" },
+      { "id": "RE-28", "rule": "角色 locomotion 默认 impressionist_single_sprite：每角色 1 PNG + 程序动效（bob/tilt/flipX/squash/shake）；无 vertical facing；禁无 sprite_sheet 合同生成 walk 多帧；程序动效豁免 RE-10 phase-2", "severity": "hard_block", "reference": "game-maker-pipeline/references/impressionist-character-locomotion.md" }
+    ]
+  },
+
+  "character_locomotion_model": {
+    "rule_id": "RE-28",
+    "default": "impressionist_single_sprite",
+    "reference": "game-maker-pipeline/references/impressionist-character-locomotion.md",
+    "applies_to": ["top_down_survivor", "side_view_horde", "ambient_explore", "idle_incremental_with_avatar"],
+    "asset_budget_per_character": 1,
+    "procedural_effects": ["bob_y", "tilt", "flip_x", "squash", "shake", "breath_bob", "fade"],
+    "forbidden_without_contract": ["walk_frame_sheets", "directional_pose_pngs", "reverse_facing_duplicate_png"],
+    "re_10_exemption": "procedural locomotion is runtime code, not animation asset batch",
+    "author_gate_override": "locomotion: accept sprite_sheet",
+    "terminate_codes": {
+      "T-LOC-01": "sprite sheet frames generated without locomotion contract",
+      "T-LOC-02": "impressionist contract but multi-frame CSS/object-fit fake animation",
+      "T-LOC-03": "mockup shows single avatar but scope expanded to full action table"
+    }
+  },
+
+  "true_gamer": {
+    "variable_id": "true_gamer",
+    "philosophy": "作者常给笼统词（类型梗、参考作、氛围形容词）。true_gamer 以游戏阅历将其拓展为可执行的 RE 策划案，供 re_01 mockup 与后续反推使用。",
+    "activates_at": "re_layer_00_intent",
+    "persists_in": ["gamer-brief.json", "idea-brief.json"],
+    "re_layer_00_role": "intent_expansion",
+    "inputs": ["author_raw_message", "optional_gdd_json"],
+    "outputs": ["gamer-brief.json", "idea-brief.json#策划案", "visual-scan/true-gamer-intent-expansion.json"],
+    "expansion_duties": [
+      "保留 author_raw_input 原文，不丢作者用词",
+      "推断 primary_archetype + genre_tags",
+      "选 2–5 珠玉在前 exemplar（steal UI 结构 / avoid 剧情 IP）",
+      "将笼统参考（如「像恶魔城」）拆解为 aesthetic_tokens + must_have_ui_blocks + core_loop",
+      "划分 systems_phase_1（mockup 合同）vs phase_2_features（默认不做）",
+      "写 narrative_lock：谁在哪、为何 UI 合理",
+      "为 re_01 预埋 mockup_variant_hints（布局方向，非成品图）",
+      "写 art/style-anchor.json + art/art-prompt-registry.json（RE-17）",
+      "写 gdd/ 目录满足 gdd_minimum_contract（RE-18）",
+      "登记 character_locomotion.model（默认 impressionist_single_sprite，RE-28）"
+    ],
+    "forbidden": [
+      "把作者原话直接粘贴进 idea-brief 当策划案完事",
+      "re_01 前缺少 gamer-brief.json",
+      "拓展时偷 exemplar 营业/角色剧情",
+      "把 phase_2 系统写进 phase_1 must_have_ui_blocks",
+      "无 art-prompt-registry 即 image_gen",
+      "无 economy/producers/upgrades 表即进入 mockup 或 whitebox"
+    ],
+    "re_01_supervision": "re_01 的 true_gamer 审查须对照 gamer-brief convention_locks + idea-brief 策划案，不仅看画面"
+  },
+
+  "gdd_minimum_contract": {
+    "rule_id": "RE-18",
+    "gate": "gdd: accept | gdd: revise — {note}",
+    "required_before": "re_layer_01_screenshot_gen",
+    "manifest": "gdd/MANIFEST.json",
+    "required_files": [
+      "gdd/economy-table.json",
+      "gdd/producers.json",
+      "gdd/upgrades.json",
+      "gdd/combo-system.json",
+      "gdd/tick-engine.json",
+      "gdd/input-map.json",
+      "gdd/ui-binding-map.json",
+      "gdd/narrative-log.json",
+      "gdd/state-machine-draft.json",
+      "gdd/content-slots-draft.json"
+    ],
+    "required_art_files": [
+      "art/style-anchor.json",
+      "art/art-prompt-registry.json"
+    ],
+    "preflight": "gdd/MANIFEST.json#minimum_for_whitebox 全部 on disk → 否则 blocked_note"
+  },
+
+  "art_prompt_contract": {
+    "rule_id": "RE-17",
+    "priority": "SUPREME",
+    "iron_laws": "RE-19..RE-26",
+    "reference": "game-maker-pipeline/references/art-production-iron-laws.md",
+    "required_before": "re_layer_01_screenshot_gen",
+    "artifacts": {
+      "style_anchor": "art/style-anchor.json",
+      "registry": "art/art-prompt-registry.json",
+      "wireframe_contract": "art/wireframe-to-pixel-contract.json",
+      "prompt_audit": "art/prompt-audit.json",
+      "registry_template": "grokmaker/reverse-game-template/art/art-prompt-registry.TEMPLATE.json",
+      "per_asset_fields": [
+        "asset_id",
+        "category",
+        "prompt_delta",
+        "references",
+        "output_path",
+        "aspect_ratio",
+        "negative_prompt_ref",
+        "layout_ref",
+        "verification"
+      ]
+    },
+    "prompt_composition": {
+      "formula": "{style_anchor.prompt_block} {asset.prompt_delta}",
+      "negative": "{style_anchor.negative_block}",
+      "forbidden": ["one_line_summary_only", "ad_hoc_session_prompt", "prompt_without_anchor_id"]
+    },
+    "generation_discipline": [
+      "先 registry 全量登记，后按 generation_order 生成",
+      "衍生资产必须 image_edit 或 parent asset_id 已落盘",
+      "regen 只改 prompt_delta / verification，禁止重写 prompt_block",
+      "场景板禁烘焙 UI 文字；数值仅 HTML/CSS",
+      "生成后跑 scripts/art_verify.sh；失败 STOP art: regen",
+      "同步 art/prompt-audit.json"
+    ],
+    "mockup_modes": {
+      "layout_wireframe": {
+        "when": "模块化扩建/剪影/meta 主反馈在布局",
+        "re_01": "HTML/CSS 模块 = 布局合同；禁 image_gen 室内整场景作主 playfield",
+        "post_pick": "wireframe-to-pixel-contract → pic gen 替换"
+      },
+      "scene_plate": {
+        "when": "单场景气质为主（VN/小店 slice）",
+        "re_01": "master 场景 + HTML UI 叠层",
+        "post_pick": "diegetic 插画按 registry 补全"
+      }
+    }
+  },
+
+  "wireframe_to_pixel_contract": {
+    "rule_id": "RE-23",
+    "path": "art/wireframe-to-pixel-contract.json",
+    "required_when": ["castle_silhouette_meta", "modular_playfield_expansion", "author_confirms_wireframe_is_layout_only"],
+    "locked": ["orthographic_camera", "anchor_px", "attach_edge", "tier_replace_rules", "producer_show_when"],
+    "not_locked": ["css_geometry", "flat_color_fill", "placeholder_sky"],
+    "author_gate": "art: accept | art: regen — {asset_id}"
+  },
+
+  "re_layer_00_workflow": {
+    "phases": [
+      {
+        "id": "re_00a_intent",
+        "order": [
+          "capture author_raw_input",
+          "true_gamer: archetype + exemplar_works",
+          "expand → idea-brief.策划案 core fields",
+          "write gamer-brief.json",
+          "STOP intent gate"
+        ],
+        "gate": "intent: accept | intent: revise — {note}"
+      },
+      {
+        "id": "re_00b_gdd_art",
+        "order": [
+          "write art/style-anchor.json",
+          "write art/art-prompt-registry.json（全资产 prompt + references）",
+          "write gdd/* 满足 gdd_minimum_contract",
+          "write gdd/MANIFEST.json",
+          "merge gdd refs into idea-brief.策划案",
+          "write visual-scan/true-gamer-intent-expansion.json",
+          "STOP gdd gate"
+        ],
+        "gate": "gdd: accept | gdd: revise — {note}"
+      }
+    ],
+    "author_facing": ["idea-brief.json#策划案", "gdd/MANIFEST.json", "art/art-prompt-registry.json"],
+    "machine_facing": ["gamer-brief.json", "idea-brief.json", "gdd/", "art/", "visual-scan/true-gamer-intent-expansion.json"]
+  },
+
+  "aesthetic_contract": {
+    "priority": "SUPREME",
+    "rule_id": "RE-15",
+    "scope": "all_visible_mockup_elements",
+    "definition": "场景、功能 UI、卡面、图标、框体、配色、材质须来自同一 art-direction，与 idea-brief 气质锁一致。",
+    "hard_rules": [
+      "禁止无气质的纯色/灰块占位（card_face、icon、frame、hud_chip）",
+      "mockup 中可见的元素不得推迟到 re_layer_06 才补审美",
+      "每 variant 须有 aesthetic_theme，palette 与场景 plate 对齐",
+      "image_gen 负责气质化插画与场景；HTML/CSS 负责精确叠层、框体、数值",
+      "true_gamer 须审查 aesthetic 一致性，不仅是热区结构"
+    ],
+    "artifact_home": {
+      "project": "idea-brief.json → aesthetic_tokens",
+      "variant": "mockup-briefs.json → aesthetic_contract + variants[].aesthetic_theme",
+      "structure": "screenshot-structure-spec.json → 登记 card_face/icon 等 diegetic 区",
+      "review": "gamer-brief.json → aesthetic_locks；visual-scan/true-gamer-review → TG-aesthetic"
+    },
+    "genre_diegetic_examples": {
+      "card_battle": "card_face = creature art + worn frame + sigil；与牌桌场景同 palette",
+      "dialogue_vn": "dialogue_plank 材质/光照与场景一致",
+      "shop_slice": "小票/铭牌纹理与柜台场景同材质族"
+    }
+  },
+
+  "entry": {
+    "init": "grokmaker/reverse-game-template/scripts/init_project.sh {slug}",
+    "serve": "cd {project_root} && ./scripts/serve.sh",
+    "gallery_url": "http://127.0.0.1:{port}/screenshots/gallery.html",
+    "game_url": "http://127.0.0.1:{port}/game/index.html"
+  },
+
+  "target": {
+    "device": "Remnant Pocket",
+    "runtime": "rp-web",
+    "display": { "aspect_ratio": "4:3", "default": "640x480" },
+    "input": { "profile": "rp_gamepad_v1", "confirm": "button_a", "cancel": "button_b", "pause": "menu" },
+    "package": { "format": "rpc", "required": ["manifest.json", "cover.png", "game/index.html"] }
+  },
+
+  "re_layer_01_workflow": {
+    "preflight": [
+      "gdd_minimum_contract PASS",
+      "art_prompt_contract PASS (registry 预登记 shell，RE-19)",
+      "intent_status accepted",
+      "mockup_mode chosen: layout_wireframe | scene_plate"
+    ],
+    "order_layout_wireframe": [
+      "mockup-briefs.json + mockup_art_role=layout_wireframe_only",
+      "castle-progression or layout JSON with anchor_px",
+      "screenshot-structure-spec.json",
+      "variants: HTML/CSS modular wireframe（禁 image_gen 室内整场景作主视觉）",
+      "gallery.html",
+      "optional: author-ref wireframe screenshot",
+      "STOP author pick"
+    ],
+    "order_scene_plate": [
+      "mockup-briefs.json + aesthetic_contract",
+      "screenshot-structure-spec.json",
+      "scenes image_gen per registry（no UI text）",
+      "diegetic per registry（no baked text）",
+      "variants composite HTML",
+      "gallery.html",
+      "true_gamer review",
+      "STOP author pick"
+    ],
+    "forbidden": [
+      "image_gen full interior scene when design_lock requires silhouette expansion",
+      "pic gen before registry entry exists",
+      "treating wireframe as final art quality"
+    ],
+    "author_facing": ["mockup-briefs", "gallery.html"],
+    "machine_facing": ["screenshot-structure-spec.json", "wireframe-to-pixel-contract.json"]
+  },
+
+  "re_layer_06b_art_production": {
+    "id": "re_layer_06b_art_production",
+    "after": "re_layer_07_whitebox accept OR parallel post-pick",
+    "gate": true,
+    "prompt": "art: accept | art: regen — {asset_id}",
+    "order": [
+      "finalize art-prompt-registry.json full prompt_delta + references + verification",
+      "write art/wireframe-to-pixel-contract.json if layout_wireframe mode",
+      "generate per dependency_graph.generation_order",
+      "image_edit for all references[] != anchor-only",
+      "scripts/art_verify.sh",
+      "update art/prompt-audit.json",
+      "swap game/ img src — anchor_px unchanged",
+      "STOP art gate"
+    ],
+    "outputs": ["art/prompt-audit.json", "screenshots/silhouette/", "screenshots/diegetic/", "asset-decomposition.json#pixel_swap_status"]
+  },
+
+  "exemplar_remix": {
+    "steal": "UI layout zones only",
+    "reject": "source game narrative context (shop customers, bar service, etc.)"
+  },
+
+  "layers": [
+    { "id": "re_layer_00_intent", "gate": true, "prompt": "intent: accept | intent: revise — {note}", "sub_phases": ["re_00a_intent", "re_00b_gdd_art"], "outputs": ["gamer-brief.json", "idea-brief.json", "gdd/MANIFEST.json", "art/style-anchor.json", "art/art-prompt-registry.json", "visual-scan/true-gamer-intent-expansion.json", "pipeline_state.json"] },
+    { "id": "re_layer_01_screenshot_gen", "gate": false, "outputs": ["mockup-briefs.json", "screenshot-structure-spec.json", "screenshots/gallery.html", "screenshot-gen-manifest.json", "gamer-brief.json"] },
+    { "id": "re_layer_02_author_pick", "gate": true, "prompt": "screenshot: pick {id} | screenshot: revise — {note}", "outputs": ["author-selection.json"] },
+    { "id": "re_layer_03_reverse_extract", "gate": false, "outputs": ["screenshot-spec.json", "visual-scan/reverse-scan.json"] },
+    { "id": "re_layer_04_logic_derive", "gate": false, "outputs": ["interaction-spec.json", "content-slots.json", "state-machine.json"] },
+    { "id": "re_layer_05_scope_contract", "gate": true, "prompt": "scope: accept | scope: revise — {note}", "outputs": ["delivery-contract.json", "content-units-tracker.json", "gameplay-spec.json"] },
+    { "id": "re_layer_06_asset_decompose", "gate": false, "outputs": ["asset-decomposition.json"] },
+    { "id": "re_layer_06b_art_production", "gate": true, "prompt": "art: accept | art: regen — {asset_id}", "outputs": ["art/prompt-audit.json", "pixel modules on disk"] },
+    { "id": "re_layer_07_whitebox", "gate": true, "prompt": "whitebox: accept | whitebox: revise — {note}", "outputs": ["game/"] },
+    { "id": "re_layer_08_playtest", "gate": true, "prompt": "playtest: accept | playtest: revise — {note}", "outputs": ["playtime-regression.json"] },
+    { "id": "re_layer_09_ship", "gate": false, "preflight": ["scripts/art_verify.sh PASS", "art: accept recorded"], "outputs": ["manifest.json", "cover.png", "{slug}.rpc"] }
+  ],
+
+  "artifact_schemas": {
+    "mockup-briefs.json": {
+      "required": ["shared_premise", "forbidden_in_mockup", "aesthetic_contract", "variants"],
+      "variant_fields": ["id", "title", "策划案", "aesthetic_theme", "exemplar_steal", "exemplar_reject"]
+    },
+    "gamer-brief.json": {
+      "required": ["layer", "author_raw_input", "author_intent_summary", "primary_archetype", "exemplar_works", "convention_locks", "true_gamer_verdict"],
+      "layer_00_fields": ["expansion_log", "re_workflow_hints", "mockup_variant_hints"]
+    },
+    "idea-brief.json": {
+      "required": ["author_raw_input", "hook", "genre_tags", "viewport", "aesthetic_tokens", "策划案"],
+      "aesthetic_token_fields": ["mood", "palette", "materials", "line_style", "lighting"],
+      "策划案_fields": ["elevator_pitch", "core_loop", "player_role", "emotional_tone", "setting", "systems_phase_1", "systems_phase_2", "must_have_ui_blocks", "narrative_lock", "exemplar_steal", "exemplar_reject", "art_prompt_contract", "gdd_manifest"]
+    },
+    "art-prompt-registry.json": {
+      "required": ["registry_id", "style_anchor_ref", "assets", "dependency_graph", "prompt_composition_law"],
+      "asset_fields": ["asset_id", "category", "prompt_delta", "references", "output_path", "aspect_ratio", "negative_prompt_ref", "verification", "animation_model", "locomotion_contract"]
+    },
+    "art-prompt-audit.json": {
+      "required": ["audit_id", "style_anchors", "assets_on_disk", "registry_vs_runtime_gaps"],
+      "update_when": "every batch pic gen or art: regen"
+    },
+    "wireframe-to-pixel-contract.json": {
+      "required": ["mockup_role", "what_is_locked", "post_pick_pipeline", "author_reference"]
+    },
+    "gdd/MANIFEST.json": {
+      "required": ["manifest_id", "minimum_for_whitebox", "index"]
+    },
+    "screenshot-spec.json": {
+      "required": ["source_image", "viewport", "ui_regions", "anchors", "style_tokens"]
+    },
+    "interaction-spec.json": { "required": ["input_profile", "hotspots", "hud_rules"] },
+    "content-slots.json": { "required": ["slots"] },
+    "state-machine.json": { "required": ["initial", "states", "transitions"] }
+  },
+
+  "author_gates": {
+    "re_layer_00a": "intent: accept",
+    "re_layer_00b": "gdd: accept",
+    "re_layer_02": "screenshot: pick {id}",
+    "re_layer_05": "scope: accept",
+    "re_layer_07": "whitebox: accept",
+    "re_layer_06b": "art: accept",
+    "re_layer_08": "playtest: accept"
+  },
+
+  "terminate_codes_art": {
+    "T-ART-04": "磁盘资产无 registry 登记或 forbidden 资产进入 game/",
+    "T-ART-05": "ad-hoc prompt 或 prompt 未 verbatim 拼接 prompt_block",
+    "T-ART-06": "superseded style_anchor 资产与当前 anchor 混装"
+  }
+}

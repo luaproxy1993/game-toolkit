@@ -21,3 +21,14 @@ Already on this account, and not recopied here:
 - [experience loop](cards/experience-loop.md) — four lines before code; a liked screenshot is not evidence
 - [studio roles](cards/studio-roles.md) — a role writes its decision; the art director does not draw
 - [content writes](cards/content-writes.md) — dry-run, one pack, leave the other pack's bytes alone
+- [one sentence to production](cards/one-sentence-pipeline.md) — eight steps, sixteen skills; conductor still open
+
+## One sentence to production
+
+A path from one sentence to a narrative world at Barovia production quality (not Barovia content). Sixteen skills, in eight steps. The count does not include Godot engine-module skills.
+
+Three skills already have their own repos and are not recopied here: [rpg-campaign-maker](https://github.com/luaproxy1993/rpg-campaign-maker), [world-bible](https://github.com/luaproxy1993/world-bible) (`core-rule-book`), and [world-bible-pack](https://github.com/luaproxy1993/world-bible-pack).
+
+The other twelve live in [`skills/`](skills/). See the [pipeline card](cards/one-sentence-pipeline.md) for which skill fires in which step.
+
+`one-sentence-conductor` is not written yet. Do not use `game-maker-pipeline` as a stand-in.

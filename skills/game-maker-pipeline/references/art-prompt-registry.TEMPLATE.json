@@ -1,0 +1,61 @@
+{
+  "registry_id": "{slug}-art-prompts",
+  "version": "1.0.0",
+  "project_slug": "{slug}",
+  "style_anchor_ref": "ANCHOR-ID-v1",
+  "style_anchor_path": "art/style-anchor.json",
+  "wireframe_contract": "art/wireframe-to-pixel-contract.json",
+  "prompt_composition_law": "RE-20: full = style_anchor.prompt_block + asset.prompt_delta; negative = style_anchor.negative_block",
+  "dependency_graph": {
+    "generation_order": []
+  },
+  "assets": [
+    {
+      "asset_id": "EXAMPLE_ASSET",
+      "category": "structural_module | producer_module | diegetic_prop | sky_plate | character_single_sprite",
+      "phase": 1,
+      "output_path": "screenshots/example.png",
+      "aspect_ratio": "1:1",
+      "references": ["ANCHOR-ID-v1"],
+      "layout_ref": "castle-progression.json#anchor_px 或 ui-binding-map",
+      "prompt_delta": "ONE modular slice description ONLY — style already in prompt_block",
+      "negative_prompt_ref": "style-anchor.negative_block",
+      "verification": {
+        "transparent_bg": true,
+        "ground_line_px": 48,
+        "anchor_px": { "left": 0, "bottom": 48, "width": 0, "height": 0 }
+      },
+      "regen_allowed_fields": ["prompt_delta", "verification"]
+    },
+    {
+      "asset_id": "HERO_PIXEL",
+      "category": "character_single_sprite",
+      "phase": 1,
+      "animation_model": "impressionist_single_sprite",
+      "output_path": "assets/v01/characters/hero.png",
+      "aspect_ratio": "1:1",
+      "references": ["ANCHOR-ID-v1"],
+      "locomotion_contract": {
+        "directions": ["left", "right"],
+        "flip_axis": "x",
+        "no_vertical_facing": true,
+        "procedural_effects": {
+          "walk": ["bob_y", "tilt"],
+          "idle": ["breath_bob"],
+          "attack": ["squash"],
+          "hit": ["shake"]
+        },
+        "sprite_sheet_forbidden": true
+      },
+      "prompt_delta": "ONE isolated pixel character, orthographic side or top-down silhouette, transparent ground-aligned base, single neutral stand pose.",
+      "negative_prompt_ref": "style-anchor.negative_block",
+      "verification": {
+        "transparent_bg": true,
+        "ground_line_px": 0,
+        "anchor_px": { "left": 0, "bottom": 0, "width": 48, "height": 48 }
+      }
+    }
+  ],
+  "forbidden_assets": [],
+  "audit_trail": "art/prompt-audit.json"
+}
