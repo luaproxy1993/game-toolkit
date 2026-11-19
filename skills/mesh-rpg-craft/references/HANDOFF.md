@@ -32,12 +32,12 @@
 **A. 静态一切口（默认 rpg-campaign-maker）**  
 C0→C3 照旧。到 C4 时 load 本 skill 的 `LOCK-ORDER.md`：先 M0 外观，再静帧，再 FX。没有导演、没有拍门控也算完成。C5–C6 仍交静态 `dist/`。
 
-**B. Doki 网状（吸血鬼村这类）**  
+**B. Doki 网状（吸血鬼村这类，品类 `doki-mesh-world`）**  
 C0–C1 仍是 rpg-campaign-maker（切口、原声、引文）。  
 C2 的「树」= **硬节点表**（mesh M6），不是只有 `story.js`。检定和物品仍要能失败、能花掉。  
-C3 壳 = 已有 Doki 自由探索引擎，不要再搭一套 VN。  
-C4 = mesh M0–M5。  
-然后 M7–M9，而不是急着 C6 静态包。本地 HTML 试玩仍要 HTTP 启动器。
+C3 壳 = 把内容包挂到**已有的 DokiDemo GameShell**。默认路径 `/Users/a123/grokmaker/campaigns/DokiDemo`，或该仓的 git worktree（例如 `DokiDemo-brew`）。品质门是与已发布、跑在同一壳上的 Strahd AVG 逐帧对等：满幅场景板、对话双人、intro、BGM、HUD。不要再搭一套 VN，也不要在战役根新写一个 walk / look / talk 的 `index.html`。盒子上没有 DokiDemo 就停手去取壳，不要用纸壳顶替。打开首个场景的本地 HTTP 不是完成。  
+C4 = mesh M0–M5（出图从已锁锚 + 空间清单；失败板不得当下一稿参考；通过后 remount 进正在跑的包，LOOK 修订时同一趟退役旧锚）。  
+然后 M7–M9，而不是急着 C6 静态包。本地试玩仍要 HTTP，但是挂在 DokiDemo 壳上，不是另写一页。
 
 `pipeline_state.json` 可记两步：
 

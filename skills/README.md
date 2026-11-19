@@ -15,7 +15,7 @@ First-party skills for the [one-sentence-to-production](../cards/one-sentence-pi
 | [narrative-voice-production](narrative-voice-production) | 6 | Voice design, line sheets, placeholders, replacement |
 | [doki-game-maker](doki-game-maker) | 7–8 | Doki world / cartridge shell |
 | [dokiimport](dokiimport) | 8 | App SDK manifest and package check |
-| [world-ship-qa](world-ship-qa) | 8 | Pack paths, cold start, resource audit, release list |
+| [world-ship-qa](world-ship-qa) | 8 | Pack paths, cold start, resource audit, reference-shell parity, release list |
 | [dokiworld-ui-taste](dokiworld-ui-taste) | support | SillyTavern extension UI taste, not the world pack |
 | [game-maker-pipeline](game-maker-pipeline) | support | Another genre's conductor; do not use it as this path's |
 
@@ -25,4 +25,4 @@ First-party skills for the [one-sentence-to-production](../cards/one-sentence-pi
 - [rpg-campaign-maker](https://github.com/luaproxy1993/rpg-campaign-maker) — steps 2, 3, 7
 - [world-bible-pack](https://github.com/luaproxy1993/world-bible-pack) — step 5
 
-`one-sentence-conductor` (the 16th skill) is not written yet.
+`one-sentence-conductor` (the 16th skill) is not written yet; do not start it unasked. Shell / QA / LOOK remount gates are in the named skills above and in `rpg-campaign-maker`, not in a new conductor.

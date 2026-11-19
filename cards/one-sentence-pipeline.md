@@ -15,4 +15,6 @@ Rule. To take one sentence to a production-level narrative world, follow these e
 
 Twelve of the sixteen skills live in `skills/`. `world-bible`, `world-bible-pack`, and `rpg-campaign-maker` stay in their own repos and are not recopied here. `dokiworld-ui-taste` and `game-maker-pipeline` are support skills, not the conductor. `one-sentence-conductor` is not written yet; do not start it unasked.
 
+Shell, QA, and LOOK gates now live in the named skills (do not invent a side path): for `doki-mesh-world`, C3 reuses the named DokiDemo GameShell and must not substitute a paper walk/look/talk page; C5 and `world-ship-qa` require frame-by-frame parity with the shipped Strahd AVG on that shell, including internal previews; `mesh-rpg-craft` generates from the locked LOOK plus a spatial checklist, must not use a failed plate as the next generate ref, and remounts accepted art into the live pack while retiring superseded anchors.
+
 Leave. Do not vendor GodotPrompter engine modules into this path. A campaign lock stays in that campaign. Public release still has to pass the slice lock's IP / skin-change gate.

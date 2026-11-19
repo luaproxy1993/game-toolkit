@@ -1,15 +1,18 @@
 ---
 name: world-ship-qa
 description: >-
-  包装发布与质检：在玩通 sitting 之后做独立世界包校验、加载门、资源全量抽查、游客冷启动路径和版本发布清单。Use when the user
-  runs /world-ship-qa, says 发布质检, 出包检查, 游客路径, 加载幕就绪, 资源抽查, world pack QA, or is
-  about to upload or version a narrative world/pack. Not for writing the pack or
-  App SDK itself (those are /doki-game-maker and /dokiimport), and not a
-  substitute for the campaign playtest gate.
+  包装发布与质检：在玩通 sitting 之后做独立世界包校验、加载门、资源全量抽查、游客冷启动路径、参考壳对等门和版本发布清单。
+  For doki-mesh-world, a pack that only passes paths/loading/assets but is a
+  thinner shell than the shipped Strahd AVG on DokiDemo is not a pass — including
+  0.1.0-internal style previews. Use when the user runs /world-ship-qa, says 发布质检,
+  出包检查, 游客路径, 加载幕就绪, 资源抽查, world pack QA, or is about to upload or version a
+  narrative world/pack. Not for writing the pack or App SDK itself (those are
+  /doki-game-maker and /dokiimport), and not a substitute for the campaign
+  playtest gate.
 ---
 # 包装发布与质检
 
-内容能玩，还不等于能发。本 skill 是发布门：校验包的自立与路径、加载幕是否等到静帧就绪、资源是否全在、游客能否走完主链、版本号是否一致。它不发明第二种打包格式。
+内容能玩，还不等于能发。本 skill 是发布门：校验包的自立与路径、加载幕是否等到静帧就绪、资源是否全在、游客能否走完主链、是否与参考壳对等、版本号是否一致。它不发明第二种打包格式。
 
 ```text
 试玩门已过（坐通这一局）
@@ -17,6 +20,7 @@ description: >-
   → 加载门（板先盖住，静帧/入场片解码后再交手）
   → 资源全量抽查（无断链、无失败片、无密钥、无源书原文）
   → 游客冷启动实测
+  → 参考壳对等（doki-mesh-world，含内部预览）
   → 版本与发布清单
   → STOP  ship: accept
 ```
@@ -52,6 +56,7 @@ description: >-
 - `docs/LOCK.md`（或 INTENT 里已继承的切口）仍被遵守。  
 - IP：`unofficial-remix` 若要**公开发布**（外链、商店页、预告、众筹），换皮门必须先过；内部预览包须标明非公开。源书 PDF、框文、官方美术不得在包内。这是设计门，不是法律意见。
 - **换皮名单未点名时：** Q 门最多收到「内部预览」；不要把内部预览的 Q5 写成公开 `ship: accept`。公开候选须另列：换皮点名、配音非占位、质检目录=即将上传的那一份。  
+- **占位配音：** `edge-tts` 等占位 VO 可以跟内部预览一起过（须在 CREDITS/SHIP 标明）。占位配音**不能**成为公开 `ship: accept`。  
 - 导演/对话密钥只在本机环境或宿主代理，不在说明文档或 zip 里「随便传」。
 
 本地试玩必须走 HTTP，不要 `file://`。预览壳 ≠ 已上传的正式包；不要在预览会话里动官方 zip。
@@ -129,6 +134,23 @@ description: >-
 
 **STOP** `step Q4: accept`
 
+### Q-parity · 参考壳对等
+
+**完成：** 对 `doki-mesh-world`（以及跑在 DokiDemo 壳上的等价叙事世界包），正在跑的包已与**指定参考 AVG 壳**逐帧对等。内部预览（含 `0.1.0-internal` 这类）也必须过这一门。
+
+对照：
+
+- [ ] 包挂在已有的 DokiDemo GameShell 上。默认路径 `/Users/a123/grokmaker/campaigns/DokiDemo`，或该仓的 git worktree（例如 `DokiDemo-brew`）。不是战役根新写的 walk / look / talk `index.html`，也不是另一套更薄的页。  
+- [ ] 与已发布、跑在同一壳上的 Strahd AVG 对照：满幅场景板、对话双人、intro reel、BGM、HUD。路径、加载、资源抽查都过，但看起来是另一套更薄的壳 → **不得**记为 world-ship-qa 通过，包括内部预览。  
+- [ ] 打开首个场景的本地 HTTP 不是对等门的完成条件。  
+- [ ] 占位 VO 可以留在内部预览；公开 `ship: accept` 仍要求非占位配音。
+
+其他品类（`static-campaign-sitting`、idle/`.rpc`、Godot 2D）不走这条对等门，仍走各自的壳与质检。
+
+找不到 DokiDemo 或参考 AVG 时停手去取，不要把「本机刚好能打开的纸壳」写成通过。
+
+**STOP** `step Q-parity: accept` — `doki-mesh-world` 未过此门，不得把 Q5 或任何内部预览标成 world-ship-qa 通过。
+
 ### Q5 · 版本与发布清单
 
 **完成：** 版本号在源码 manifest、构建产物、对外说明里一致；有简短变更说明；发布目标明确。
@@ -141,10 +163,12 @@ description: >-
 发布清单（全部勾上才能请求 `ship: accept`）：
 
 - [ ] Q0–Q4 已 accept  
+- [ ] Q-parity 已 accept（`doki-mesh-world` 必过，含内部预览；其他品类可记 N/A）  
 - [ ] `/dokiimport` 或对应导出检查通过  
 - [ ] 版本号一致，变更说明已写  
 - [ ] 即将上传的目录 = 刚质检的那一份  
-- [ ] 无密钥、无源书、无平台根目录污染
+- [ ] 无密钥、无源书、无平台根目录污染  
+- [ ] 公开 `ship: accept` 不含占位 VO（内部预览可保留并标明）
 
 **STOP** `step Q5: accept` — 等待 `ship: accept`。accept 之后才允许执行作者本轮点名的上传。本 skill 不把「写了清单」当成已经发布。
 
@@ -157,12 +181,15 @@ description: >-
 - 用已登录作者号代替游客冷启动  
 - 在质检未过时改官方已发布包  
 - 把本 skill 写成第二份 App SDK 规范
+- 只过路径/加载/资源、视觉上却是更薄的纸壳，却把内部预览写成 world-ship-qa 通过
+- 把 `edge-tts` 等占位配音写成公开 `ship: accept`
 
 ## 4. 转交
 
 | 缺口 | 去 |
 |------|------|
 | 坐席还不能玩、3 分钟句不成立 | `/rpg-campaign-maker playtest` 或补 mesh 当前层，不要发 |
+| 壳是另写的 walk/look/talk 页，或与参考 AVG 不对等 | 停手去取 DokiDemo 壳并 remount，不要发；C3 规则在 `/rpg-campaign-maker` |
 | manifest / dist 结构不对 | `/dokiimport check` 然后修，再回到 Q1 |
 | 卡带导出、密钥剔除、合入分层 | `/doki-game-maker` D5/D6 |
 | 加载 loop / 海报缺失 | `/cinematic-video-assets` |
@@ -180,6 +207,7 @@ load:
   - 战役 docs/LOCK.md 与最近一次试玩简报（若有）
 preflight:
   - 试玩门已过，或本步就是 Q0 停手
+  - doki-mesh-world 须过 Q-parity（含内部预览），不要用纸壳顶替
   - 不把预览改动写进官方已发布树
   - 不打印完整密钥
 ```

@@ -4,6 +4,8 @@ description: >
   Doki 魔改网状 RPG 的锁序与踩坑：立绘/alpha intro/粒子、场景静帧与 idle loop、
   NPC 拍门控认知、导演只消费已闸内容、世界书与硬节点、GUI 数值绑定。
   GitHub 技能能省时间，Doki 接线不能省。改一层再推下一层；未锁主外观时禁止并行开特效。
+  LOOK 接受后按已锁锚 + 空间清单出图；失败/未对齐板不得当下一稿参考；
+  须装回正在跑的 DokiDemo 战役包，并在同一趟退役被取代的旧锚。
   Use when the user runs /mesh-rpg-craft, says 网状任务, NPC认知, 立绘alpha,
   idle loop, 导演agent, 吸血鬼战役踩坑, doki campaign, 主线支线硬节点,
   or is stuck regenerating one-off art/NPC lines that fight each other.
@@ -77,16 +79,20 @@ GitHub 上的通用技能能省生成轮次。**Doki 接线、拍门控、alpha�
 
 ### M0 · 主外观锁
 
-**完成：** `docs/LOOK.md`（或 pack ART）里有：一句气质、参考静帧路径、画幅、键色/透明规则、禁止的 IP/风格。一张**已接受**的锚图（人+景各一张更好）。
+**完成：** `docs/LOOK.md`（或 pack ART）里有：一句气质、参考静帧路径、画幅、键色/透明规则、禁止的 IP/风格。一张**已接受**的锚图（人+景各一张更好）。新锚已 **remount** 进正在跑的 DokiDemo 战役包；被取代的旧锚已从 live pack **退役**。
 
 未锁之前禁止：intro 视频、粒子、idle loop、多角色分风格。
+
+已接受之后，所有出图从**这批已锁锚**出发，并带上空间清单（画面里有什么、谁在哪、空板不进人、镶嵌/顺序约束等）。契约：`SCENE.md`。不要拿落选稿当下一轮参考。
+
+当 LOOK 被修订并再次接受：在**同一趟**把新锚装进正在跑的 DokiDemo 战役包，并从 live pack 退役被取代的旧锚（例如 painterly 锁过之后，包里不得再留上一闸的水彩锚）。装包是必做步，不是事后补。未 remount、未退役，M0 不算完成。
 
 **STOP** `step M0: accept`
 
 ### M1 · 立绘静帧
 
 转交 `game-asset-core` + `game-character-consistency`。契约：`references/PORTRAIT.md`。  
-产物：干净 RGBA，白底或纯键色，**不烤场景、不烤光晕、不烤粒子**。同一角色只从 master still `image_edit`。
+产物：干净 RGBA，白底或纯键色，**不烤场景、不烤光晕、不烤粒子**。同一角色只从 master still `image_edit`。通过后 remount 进正在跑的 DokiDemo 战役包。
 
 **STOP** `step M1: accept`
 
@@ -105,6 +111,10 @@ GitHub 上的通用技能能省生成轮次。**Doki 接线、拍门控、alpha�
 ### M4 · 场景静帧
 
 同一主外观。原生画幅（场景板不是地图、不是 1:1 挂进去）。契约：`SCENE.md`。
+
+生成前写空间清单（画面里有什么、谁在哪、空板不进人、镶嵌/顺序约束、门洞与相邻房间）。验收不过：整张作废，从**上一张已接受的锁/锚**重切，禁止把未对齐/失败板当作下一稿参考（教训：走廊天/山/河/火镶嵌、实验室书架、舱口站位一类错构图，用失败稿再生成会把错误锁死）。
+
+通过后必须 **remount** 进正在跑的 DokiDemo 战役包；live 壳里不得留下已退役的 LOOK 锚。未 remount 不算 M4 完成。
 
 **STOP** `step M4: accept`
 
@@ -173,6 +183,8 @@ load:
 preflight:
   - 有主外观锁，或本步就是 M0
   - 不把失败视频 concat 进正片
+  - 不把失败/未对齐静帧当下一稿参考；从上一张已接受的锁重切
+  - LOOK 修订后同一趟 remount 新锚并退役 live pack 里的旧锚
   - 不把未门控的 NPC.dialogue 当开口
   - 改认知不重渲 CG；改 CG 不重写世界书
 ```
